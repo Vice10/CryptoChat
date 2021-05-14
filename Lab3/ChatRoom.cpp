@@ -161,6 +161,22 @@ bool ChatRoom::addMember(Member newMem)
 	return true;
 }
 
+string ChatRoom::getMemberNameByIdx(uint idx) {
+	string tmp = "";
+	for (auto memb : members) {
+		string membName = memb.getUniqueName();
+		for (int i = membName.size() - 1; i > -1; i--) {
+			if (membName.at(i) == '_')
+				break;
+			else
+				tmp += membName.at(i);
+		}
+		reverse(tmp.begin(), tmp.end());
+		if (tmp == to_string(idx))
+			return membName;
+	}
+}
+
 bool ChatRoom::removeMember(string name)
 {
 	if (members.size() == 0) return false;
@@ -184,6 +200,11 @@ bool ChatRoom::removeMember(string name)
 		}
 	}
 	return false;
+}
+
+bool ChatRoom::removeMember(uint idx) {
+	string membName = getMemberNameByIdx(idx);
+	return removeMember(membName);
 }
 
 Member ChatRoom::getMemberByName(string name)

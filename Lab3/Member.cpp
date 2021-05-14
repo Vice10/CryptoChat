@@ -118,6 +118,26 @@ char* Member::getCurTimeHelper(const tm* timeptr)
 	return result;
 }
 
+vector<Message> Member::transformMes(char* messages) { /// messages[0] == '0'
+	string allMes = messages;
+	vector<Message> res;
+	json jMessages = allMes;
+	Message curMes{};
+	for (const auto& mes : jMessages) {
+		jt.from_json(mes, curMes);
+		res.push_back(curMes);
+	}
+	return res;
+}
+
+uint Member::getLatestTag(){
+	if (secretKeys.size() == 0) return 0;
+	map<uint, string>::iterator itr;
+	itr = secretKeys.end();
+	itr--;
+	return itr->first;
+}
+
 BigInt fieldParams::getHash(BigInt key)
 {
 	return key % M;

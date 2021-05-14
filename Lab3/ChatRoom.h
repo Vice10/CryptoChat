@@ -24,8 +24,12 @@ public:
 	bool initPrivateKeyGen();
 	bool addMember(Member newMem);
 	bool removeMember(string name);
+	bool removeMember(uint idx);
 	const uint getCurrentTag() { return currentTag; };
 	Member getMemberByName(string name);
+	string getMemberNameByIdx(uint idx);
+	uint getMemberCount() { return members.size(); };
+
 private:
 	vector<Member> members;
 	vector<Message> messages;

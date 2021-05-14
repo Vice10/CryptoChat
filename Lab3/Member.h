@@ -57,7 +57,7 @@ class Member
 {
 public:
 	Member(string name);
-	const string getUniqueName() { return uniqueName; };
+	string getUniqueName() { return uniqueName; };
 	BigInt genPublicKey();		    /// g and p are specified by the chat room
 	BigInt genSecretKey(BigInt publicKey, uint tag);    /// return secretKey^check (mod p_mes)
 	json compoundSecretMessage(string text, uint tag);  /// the current tag is provided by the chat room
@@ -67,6 +67,9 @@ public:
 	const map<uint, string> getSecretKeys() { return secretKeys; };
 	bool setUniqueName(string name);
 	bool setSecretKeys(map<uint, string> newSecretKeys);
+	vector<Message> transformMes(char* messages);
+	uint getLatestTag();
+	uint getSecretKeysCount() { return secretKeys.size(); };
 private:
 	string uniqueName;
 	map<uint, string> secretKeys;
