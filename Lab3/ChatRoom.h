@@ -16,6 +16,7 @@ public:
 	void inputMessages();
 	void outputMessages();
 	std::vector<Message> getAllMessages();
+	std::string getAllMessages(int num);
 	std::vector<Message> getMessages(uint tag);
 	std::vector<Message> getMessages(std::vector<uint> tags);
 	std::vector<std::string> getMessagesAndKeys(std::string name);
