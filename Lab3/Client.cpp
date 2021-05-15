@@ -140,17 +140,13 @@ int main(int argc, char* argv[]) {
 	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)handle, NULL, NULL, NULL);
 	/// Send username to server
 	send(connection, userName.c_str(), userName.length() + 1, NULL); /// send   # Bob
-	
+	Sleep(1);
 	//1 Marina Hello 13 etc etc etc
 	char sendMessage[10000];
 	std::string temporar;
 	std::cin.get();
 	while (true) {
 		getline(std::cin, temporar);
-		if (m.getSecretKeysCount() == 0) {
-			std::cout << "No secret keys available. Fetch your secret keys via command 0\n";
-			continue;
-		}
 		std::string mes;
 		int index;
 		try {
