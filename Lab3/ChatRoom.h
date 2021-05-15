@@ -2,7 +2,7 @@
 #include "Member.h"
 #include <vector>
 
-using namespace std;
+
 
 class ChatRoom
 {
@@ -15,27 +15,27 @@ public:
 	~ChatRoom();
 	void inputMessages();
 	void outputMessages();
-	vector<Message> getAllMessages();
-	vector<Message> getMessages(uint tag);
-	vector<Message> getMessages(vector<uint> tags);
-	vector<string> getMessagesAndKeys(string name);
-	string getMessagesAndKeys(string name, int dum);
+	std::vector<Message> getAllMessages();
+	std::vector<Message> getMessages(uint tag);
+	std::vector<Message> getMessages(std::vector<uint> tags);
+	std::vector<std::string> getMessagesAndKeys(std::string name);
+	std::string getMessagesAndKeys(std::string name, int dum);
 	bool addMessage(json message);
 	bool initPrivateKeyGen();
 	bool addMember(Member newMem);
-	bool removeMember(string name);
+	bool removeMember(std::string name);
 	bool removeMember(uint idx);
 	const uint getCurrentTag() { return currentTag; };
-	Member getMemberByName(string name);
-	string getMemberNameByIdx(uint idx);
+	Member getMemberByName(std::string name);
+	std::string getMemberNameByIdx(uint idx);
 	uint getMemberCount() { return members.size(); };
 
 private:
-	vector<Member> members;
-	vector<Message> messages;
+	std::vector<Member> members;
+	std::vector<Message> messages;
 	uint currentTag;
-	string messagesFilename = "messages.json";
-	string currentTagFilename = "current_tag.json";
+	std::string messagesFilename = "messages.json";
+	std::string currentTagFilename = "current_tag.json";
 
 	CryptAlg cra{};
 	jsonTranslator jt;
