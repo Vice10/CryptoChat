@@ -2,7 +2,7 @@
 
 ChatRoom::ChatRoom()
 {
-	ifstream fin(currentTagFilename, ios::in);
+	std::ifstream fin(currentTagFilename, std::ios::in);
 	uint messagesCount;
 	if (!(fin >> currentTag >> messagesCount)) exit(123);
 	fin.close();
@@ -12,7 +12,7 @@ ChatRoom::ChatRoom()
 
 ChatRoom::~ChatRoom()
 {
-	ofstream fout(currentTagFilename, ios::out);
+	std::ofstream fout(currentTagFilename, std::ios::out);
 	if (!(fout << currentTag << " " << messages.size())) exit(643);
 	fout.close();
 	outputMessages();
@@ -20,7 +20,7 @@ ChatRoom::~ChatRoom()
 
 void ChatRoom::inputMessages()
 {
-	ifstream fin(messagesFilename);
+	std::ifstream fin(messagesFilename);
 	json inpMessages;
 	fin >> inpMessages;
 	if (inpMessages == NULL)
@@ -35,36 +35,46 @@ void ChatRoom::inputMessages()
 
 void ChatRoom::outputMessages()
 {
-	ofstream fout(messagesFilename, ofstream::binary);
+	std::ofstream fout(messagesFilename, std::ofstream::binary);
 	json outMessages;
 	json outMes;
 	for (auto const& mes : messages) {
 		jt.to_json(outMes, mes);
 		outMessages.push_back(outMes);
 	}
-	fout << setw(4) << outMessages;
+	fout << std::setw(4) << outMessages;
 	fout.close();
 }
 
-vector<Message> ChatRoom::getAllMessages()
+std::vector<Message> ChatRoom::getAllMessages()
 {
 	return messages;
 }
 
-vector<Message> ChatRoom::getMessages(uint tag)
+std::string ChatRoom::getAllMessages(int num) {
+	json allMes;
+	json curMes;
+	for (const auto& mes : messages) {
+		jt.to_json(curMes, mes);
+		allMes.push_back(curMes);
+	}
+	return allMes.dump();
+}
+
+std::vector<Message> ChatRoom::getMessages(uint tag)
 {
-	vector<Message> tmp;
+	std::vector<Message> tmp;
 	for (auto const& mes : messages)
 		if (mes.tag == tag)
 			tmp.push_back(mes);
 	return tmp;
 }
 
-vector<Message> ChatRoom::getMessages(vector<uint> tags)
+std::vector<Message> ChatRoom::getMessages(std::vector<uint> tags)
 {
-	vector<Message> tmp;
+	std::vector<Message> tmp;
 	for (uint t : tags) {
-		vector<Message> tmp2;
+		std::vector<Message> tmp2;
 		tmp2 = getMessages(t);
 		if (!tmp2.empty())
 			for (auto const& mes : tmp2)
@@ -73,14 +83,14 @@ vector<Message> ChatRoom::getMessages(vector<uint> tags)
 	return tmp;
 }
 
-vector<string> ChatRoom::getMessagesAndKeys(string name)
+std::vector<std::string> ChatRoom::getMessagesAndKeys(std::string name)
 {
 	// keys then messages
-	map<uint, string> keys;
+	std::map<uint, std::string> keys;
 	for (auto& const memb : members)
 		if (memb.getUniqueName() == name)
 			keys = memb.getSecretKeys();
-	vector<string> res;
+	std::vector<std::string> res;
 	Message tmpMes;
 	tmpMes.date = "123";
 	tmpMes.sender = "123";
@@ -91,23 +101,23 @@ vector<string> ChatRoom::getMessagesAndKeys(string name)
 		tmpMes.tag = key.first;
 		tmpMes.str = key.second;
 		jt.to_json(curMes, tmpMes);
-		string mesString = curMes.dump(); /// explicit conversion into string
+		std::string mesString = curMes.dump(); /// explicit conversion into std::string
 		res.push_back(mesString);
 	}
 
 	for (const auto& mes : messages) {
 		jt.to_json(curMes, mes);
-		string mesString = curMes.dump();
+		std::string mesString = curMes.dump();
 		res.push_back(mesString);
 	}
 	return res;
 }
 
-string ChatRoom::getMessagesAndKeys(string name, int dum)
+std::string ChatRoom::getMessagesAndKeys(std::string name, int dum)
 {
 	auto keysAndMes = getMessagesAndKeys(name);
 	if (keysAndMes.size() == 0) return "[]";
-	string res = "[";
+	std::string res = "[";
 	for (const auto& mes : keysAndMes) {
 		res += mes;
 		res += ",";
@@ -129,15 +139,15 @@ bool ChatRoom::addMessage(json message)
 bool ChatRoom::initPrivateKeyGen()
 {
 	if (members.size() < 2) {
-		cout << "Too few members for key exchange.\n\n";
+		std::cout << "Too few members for key exchange.\n\n";
 		return false;
 	}
 	BigInt check{ 12345 };
 	currentTag++;
-	vector<BigInt> pubKeys;
+	std::vector<BigInt> pubKeys;
 	for (auto& memb : members)
 		pubKeys.push_back(memb.genPublicKey());
-	vector<BigInt> checkResponse;
+	std::vector<BigInt> checkResponse;
 
 	checkResponse.push_back(members[0].genSecretKey(pubKeys[pubKeys.size() - 1], currentTag));
 	for (uint i = 1; i < pubKeys.size(); i++)
@@ -161,10 +171,10 @@ bool ChatRoom::addMember(Member newMem)
 	return true;
 }
 
-string ChatRoom::getMemberNameByIdx(uint idx) {
-	string tmp = "";
+std::string ChatRoom::getMemberNameByIdx(uint idx) {
+	std::string tmp = "";
 	for (auto memb : members) {
-		string membName = memb.getUniqueName();
+		std::string membName = memb.getUniqueName();
 		for (int i = membName.size() - 1; i > -1; i--) {
 			if (membName.at(i) == '_')
 				break;
@@ -172,12 +182,12 @@ string ChatRoom::getMemberNameByIdx(uint idx) {
 				tmp += membName.at(i);
 		}
 		reverse(tmp.begin(), tmp.end());
-		if (tmp == to_string(idx))
+		if (tmp == std::to_string(idx))
 			return membName;
 	}
 }
 
-bool ChatRoom::removeMember(string name)
+bool ChatRoom::removeMember(std::string name)
 {
 	if (members.size() == 0) return false;
 	if (members.size() == 1 && members[0].getUniqueName() == name) {
@@ -203,16 +213,16 @@ bool ChatRoom::removeMember(string name)
 }
 
 bool ChatRoom::removeMember(uint idx) {
-	string membName = getMemberNameByIdx(idx);
+	std::string membName = getMemberNameByIdx(idx);
 	return removeMember(membName);
 }
 
-Member ChatRoom::getMemberByName(string name)
+Member ChatRoom::getMemberByName(std::string name)
 {
-	if (name.empty()) throw invalid_argument("getMemberByName(): empty name error");
+	if (name.empty()) throw std::invalid_argument("getMemberByName(): empty name error");
 	for (uint i = 0; i < members.size(); i++) {
 		if (members[i].getUniqueName() == name)
 			return members[i];
 	}
-	throw invalid_argument("getMemberByName(): " + name + " does not exist\n");
+	throw std::invalid_argument("getMemberByName(): " + name + " does not exist\n");
 }
