@@ -70,9 +70,13 @@ public:
 	vector<Message> transformMes(char* messages);
 	uint getLatestTag();
 	uint getSecretKeysCount() { return secretKeys.size(); };
+	void setInactive() { isActive = false; };
+	bool membIsActive() { return isActive; };
+
 private:
 	string uniqueName;
 	map<uint, string> secretKeys;
+	bool isActive = true;
 	BigInt a{}; // the secret number to generate the public key
 	const uint bitLen = 20;
 	CryptAlg cra{};
